@@ -1,3 +1,7 @@
+extern crate argparse;
+
+use argparse::{ArgumentParser, StoreTrue };
+
 #[macro_use] extern crate macro_machine;
 declare_machine!(
     PomMachine(idle {counter: 0}) // Name and initial state with initial value
@@ -78,9 +82,31 @@ declare_machine!(
 fn main() {
     use PomMachine::*;
     let mut machine = PomMachine::new();
-    machine.execute(&PomMachine::Commands::Next).unwrap();
-    machine.execute(&PomMachine::Commands::Next).unwrap();
-    machine.execute(&PomMachine::Commands::Next).unwrap();
-    machine.execute(&PomMachine::Commands::Next).unwrap();
-    machine.execute(&PomMachine::Commands::Next).unwrap();
+
+    let mut target = false;
+    let mut witnesses = false;
+    {  // this block limits scope of borrows by ap.refer() method
+        let mut ap = ArgumentParser::new();
+        ap.set_description("node state.");
+
+        ap.refer(&mut target)
+            .add_option(&["-t", "--target"], StoreTrue,
+                        "Be target");
+        ap.refer(&mut witnesses)
+            .add_option(&["-w", "--witnesses"], StoreTrue,
+                        "Be witnesses");
+        ap.parse_args_or_exit();
+    }
+
+    if target {
+        machine.execute(&PomMachine::Commands::Next).unwrap();
+        machine.execute(&PomMachine::Commands::Next).unwrap();
+    } else if witnesses {
+        machine.execute(&PomMachine::Commands::Next).unwrap();
+        machine.execute(&PomMachine::Commands::Next).unwrap();
+        machine.execute(&PomMachine::Commands::Next).unwrap();
+        machine.execute(&PomMachine::Commands::Next).unwrap();
+    } else {
+        machine.execute(&PomMachine::Commands::Next).unwrap();;
+    }
 }

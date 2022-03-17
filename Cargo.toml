@@ -1,9 +1,10 @@
 [package]
-name = "fsm2"
+name = "pom-rs"
 version = "0.1.0"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-macro_machine = "0.2"
+argparse = "0.2.2"
+macro_machine = { path = "/Users/mac/iot/rpcrust/sm/rust_fsm_macros" }
